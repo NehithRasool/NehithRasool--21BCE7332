@@ -1,37 +1,4 @@
-Here's a sample `README.md` file for your GitHub project, outlining how to clone the project, install `socket.io`, and run the Python server. 
-
-```markdown
-# Chess Game
-
-A web-based Chess Game developed using HTML, CSS, Python, Bootstrap, and Font Awesome. This project uses `socket.io` for real-time communication between players.
-
-## Table of Contents
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [Running the Server](#running-the-server)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Features
-
-- Classic chess game with real-time multiplayer support
-- Simple and responsive UI using Bootstrap
-- Icons provided by Font Awesome
-- Real-time communication with Socket.IO
-- Python-based server
-
-## Technologies Used
-
-- HTML
-- CSS
-- Python
-- Bootstrap
-- Font Awesome
-- Socket.IO
-
-## Getting Started
+Getting Started
 
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
@@ -45,7 +12,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 To clone the project to your local machine, run the following command in your terminal:
 
 ```bash
-git clone https://github.com/yourusername/chess_game.git
+git clone https://github.com/NehithRasool/chess_game.git
 ```
 
 Replace `yourusername` with your actual GitHub username.
