@@ -69,19 +69,3 @@ python server.py
 
 Open your web browser and navigate to `http://localhost:5000` to start playing.
 
-## Contributing
-
-We welcome contributions! Please fork the repository and submit a pull request for any bug fixes, enhancements, or new features.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
-
-## Notes
-
-1. **Requirements File**: Ensure you have a `requirements.txt` file listing the necessary Python dependencies.
-2. **Server Script**: The command `python server.py` assumes your server script is named `server.py`. Adjust if your script name differs.
-3. **Socket.IO**: Adjust the installation steps if using a specific version of `socket.io`.
-
-Would you like to add more sections or specific details to this `README.md` file?
