@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <title>Chess-like Game</title>
+    <style>
+        body {
+            background-color: #f0f3f4;
+            font-family: 'Times New Roman', Times, serif;
+            color: #333;
+        }
+
+        h1 {
+            font-family: 'Times New Roman';
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(5, 80px);
+            grid-template-rows: repeat(5, 80px);
+            gap: 10px;
+            margin: 0 auto;
+            background-color: #dcdde1;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            background-color: #f5f6fa;
+            border-radius: 5px;
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #e0e0e0;
+        }
+
+        .playerA {
+            color: #4a69bd;
+        }
+
+        .playerB {
+            color: #e55039;
+        }
+
+        #controls {
+            margin-top: 30px;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.2em;
+            color: #2d3436;
+        }
+
+        #error {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #e74c3c;
+        }
+
+        .player-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            color: black;
+            font-family: 'Times New Roman';
+        }
+
+        .player-a {
+            background-color: #4a69bd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .player-b {
+            background-color: #38ada9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .control-buttons button {
+            margin: 5px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .control-buttons button:hover {
+            transform: translateY(-2px);
+        }
+
+        .control-buttons button.left { background-color: #60a3bc; color: black; }
+        .control-buttons button.right { background-color: #82ccdd; color: black; }
+        .control-buttons button.forward { background-color: #3c6382; color: black; }
+        .control-buttons button.backward { background-color: #0a3d62; color: black; }
+
+        .place-button {
+            background-color: #ff9f43;
+            color: black;
+            font-weight: bold;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .place-button:hover {
+            background-color: #54a0ff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        body.dark-mode #board {
+            background-color: #34495e;
+        }
+
+        body.dark-mode .cell {
+            background-color: #95a5a6;
+            color: #ecf0f1;
+        }
+
+        body.dark-mode .place-button {
+            background-color: #e74c3c;
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="font-family: 'Times New Roman'; font-size: 40px; font-weight:bold; text-align: center;">Chess-like Game</h1>
+    <div class = "d-flex justify-content-center">
+        <div id="board"></div>
+    </div>
+    <div id="status"></div>
+    <div id="error"></div>
+    <div id="controls">
+        <div class="button-container">
+            <button class="place-button" onclick="placeCharacters('A', ['P1', 'H1', 'H2', 'H3', 'P2'])">Place A Characters</button>
+            <button class="place-button" onclick="placeCharacters('B', ['P1', 'H1', 'H2', 'H3', 'P2'])">Place B Characters</button>
+            <button class="place-button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+        </div>
+        <div class="container mt-4">
+            <div class="row">
+                <!-- Movements for Player A -->
+                <div class="col-md-6">
+                    <div class="player-section player-a">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3>Player A</h3>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-pawn"></i>Pawn A-P1</h4>
+                            <button class="left" onclick="makeMove('A', 'P1', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('A', 'P1', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('A', 'P1', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('A', 'P1', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-pawn"></i>Pawn A-P2</h4>
+                            <button class="left" onclick="makeMove('A', 'P2', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('A', 'P2', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('A', 'P2', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('A', 'P2', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-pawn"></i>Pawn A-P3</h4>
+                            <button class="left" onclick="makeMove('A', 'P3', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('A', 'P3', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('A', 'P3', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('A', 'P3', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-knight"></i>Hero A-H1</h4>
+                            <button class="left" onclick="makeMove('A', 'H1', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('A', 'H1', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('A', 'H1', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('A', 'H1', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-king"></i>Hero A-H2</h4>
+                            <button class="left" onclick="makeMove('A', 'H2', 'FL')">Forward-Left</button>
+                            <button class="right" onclick="makeMove('A', 'H2', 'FR')">Forward-Right</button>
+                            <button class="forward" onclick="makeMove('A', 'H2', 'BL')">Backward-Left</button>
+                            <button class="backward" onclick="makeMove('A', 'H2', 'BR')">Backward-Right</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-queen"></i>Hero A-H3</h4>
+                            <button class="left" onclick="makeMove('A', 'H3', 'FL')">Forward-Left</button>
+                            <button class="right" onclick="makeMove('A', 'H3', 'FR')">Forward-Right</button>
+                            <button class="forward" onclick="makeMove('A', 'H3', 'BL')">Backward-Left</button>
+                            <button class="backward" onclick="makeMove('A', 'H3', 'BR')">Backward-Right</button></br></br>
+                            <button class="left" onclick="makeMove('A', 'H3', 'RF')">Right-Forward</button>
+                            <button class="right" onclick="makeMove('A', 'H3', 'RB')">Right-Backward</button>
+                            <button class="forward" onclick="makeMove('A', 'H3', 'LF')">Left-Forward</button>
+                            <button class="backward" onclick="makeMove('A', 'H3', 'LB')">Left-Backward</button>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Movements for Player B -->
+                <div class="col-md-6">
+                    <div class="player-section player-b">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3>Player B</h3>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-pawn"></i>Pawn B-P1</h4>
+                            <button class="left" onclick="makeMove('B', 'P1', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('B', 'P1', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('B', 'P1', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('B', 'P1', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-pawn"></i>Pawn B-P2</h4>
+                            <button class="left" onclick="makeMove('B', 'P2', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('B', 'P2', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('B', 'P2', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('B', 'P2', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-pawn"></i>Pawn B-P3</h4>
+                            <button class="left" onclick="makeMove('B', 'P3', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('B', 'P3', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('B', 'P3', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('B', 'P3', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-knight"></i>Hero B-H1</h4>
+                            <button class="left" onclick="makeMove('B', 'H1', 'L')">Left</button>
+                            <button class="right" onclick="makeMove('B', 'H1', 'R')">Right</button>
+                            <button class="forward" onclick="makeMove('B', 'H1', 'F')">Forward</button>
+                            <button class="backward" onclick="makeMove('B', 'H1', 'B')">Backward</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-king"></i>Hero B-H2</h4>
+                            <button class="left" onclick="makeMove('B', 'H2', 'FL')">Forward-Left</button>
+                            <button class="right" onclick="makeMove('B', 'H2', 'FR')">Forward-Right</button>
+                            <button class="forward" onclick="makeMove('B', 'H2', 'BL')">Backward-Left</button>
+                            <button class="backward" onclick="makeMove('B', 'H2', 'BR')">Backward-Right</button>
+                        </div>
+                        <div class="control-buttons">
+                            <h4><i class="fas fa-chess-queen"></i>Hero B-H3</h4>
+                            <button class="left" onclick="makeMove('B', 'H3', 'FL')">Forward-Left</button>
+                            <button class="right" onclick="makeMove('B', 'H3', 'FR')">Forward-Right</button>
+                            <button class="forward" onclick="makeMove('B', 'H3', 'BL')">Backward-Left</button>
+                            <button class="backward" onclick="makeMove('B', 'H3', 'BR')">Backward-Right</button></br></br>
+                            <button class="left" onclick="makeMove('B', 'H3', 'RF')">Right-Forward</button>
+                            <button class="right" onclick="makeMove('B', 'H3', 'RB')">Right-Backward</button>
+                            <button class="forward" onclick="makeMove('B', 'H3', 'LF')">Left-Forward</button>
+                            <button class="backward" onclick="makeMove('B', 'H3', 'LB')">Left-Backward</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+    </div>
+
+    <!-- Add Bootstrap JS for components -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        socket.on('game_state', function(data) {
+            const board = document.getElementById('board');
+            board.innerHTML = ''; // Clear the board
+
+            data.grid.forEach((row, rowIndex) => {
+                row.forEach((cell, cellIndex) => {
+                    const cellDiv = document.createElement('div');
+                    cellDiv.className = 'cell';
+                    cellDiv.textContent = cell;
+                    
+                    if (cell.startsWith('A-')) {
+                        cellDiv.classList.add('playerA');
+                    } else if (cell.startsWith('B-')) {
+                        cellDiv.classList.add('playerB');
+                    }
+
+                    cellDiv.addEventListener('click', function() {
+                        handleCellClick(rowIndex, cellIndex);
+                    });
+
+                    board.appendChild(cellDiv);
+                });
+            });
+
+            document.getElementById('status').innerText = "Current turn: " + data.current_turn;
+        });
+
+        socket.on('error', function(data) {
+            document.getElementById('error').innerText = data.error;
+        });
+
+        socket.on('game_over', function(data) {
+            alert("Game over! Winner: " + data.winner);
+        });
+
+        function handleCellClick(row, col) {
+            console.log(`Cell clicked at row ${row}, col ${col}`);
+            // Handle cell click logic
+        }
+
+        function placeCharacters(player, characters) {
+            socket.emit('place_characters', {
+                player: player,
+                characters: characters
+            });
+        }
+
+        function makeMove(player, character, move) {
+            socket.emit('make_move', {
+                player: player,
+                character: character,
+                move: move
+            });
+        }
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const board = document.getElementById('board');
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.id = `cell-${i}`;
+                cell.className = 'cell';
+                board.appendChild(cell);
+            }
+        });
+    </script>
+</body>
+</html>
